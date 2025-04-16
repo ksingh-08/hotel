@@ -21,7 +21,8 @@ import { motion } from "framer-motion";
 
 const ContactSection = () => {
   const [activeTab, setActiveTab] = useState("message");
-  const [hoverItem, setHoverItem] = useState(null);
+  const [hoverItem, setHoverItem] = useState<string | null>(null);
+
 
   // Animation variants
   const containerVariants = {
