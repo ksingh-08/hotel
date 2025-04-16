@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 
 interface Room {
   id: number;
   name: string;
   description: string;
-  price: number;
-  image: string;
+  price: string;
+  image: StaticImageData;
   amenities: string[];
   type: string;
   available: boolean;
