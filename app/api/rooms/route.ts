@@ -5,21 +5,11 @@ export async function GET() {
   try {
     const rooms = await prisma.room.findMany({
       include: {
-        amenities: true,
-      },
+        guestHouse: true
+      }
     });
 
-    // Transform the data to match the frontend interface
-    const formattedRooms = rooms.map((room) => ({
-      id: room.id,
-      type: room.type,
-      price: room.price,
-      description: room.description,
-      amenities: room.amenities.map((a) => a.name),
-      maxOccupancy: room.maxOccupancy,
-    }));
-
-    return NextResponse.json(formattedRooms);
+    return NextResponse.json(rooms);
   } catch (error) {
     console.error("Error fetching rooms:", error);
     return NextResponse.json(
@@ -32,23 +22,18 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { type, price, description, amenities, maxOccupancy } = body;
-
     const room = await prisma.room.create({
       data: {
-        type,
-        price,
-        description,
-        maxOccupancy,
-        amenities: {
-          create: amenities.map((name: string) => ({ name })),
-        },
-      },
-      include: {
-        amenities: true,
-      },
+        name: body.name,
+        description: body.description,
+        type: body.type,
+        price: body.price,
+        capacity: body.capacity,
+        amenities: body.amenities,
+        images: body.images,
+        guestHouseId: body.guestHouseId
+      }
     });
-
     return NextResponse.json(room);
   } catch (error) {
     console.error("Error creating room:", error);
@@ -62,16 +47,12 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, price } = body;
-
     const room = await prisma.room.update({
-      where: { id },
-      data: { price },
-      include: {
-        amenities: true,
-      },
+      where: { id: body.id },
+      data: {
+        price: body.price
+      }
     });
-
     return NextResponse.json(room);
   } catch (error) {
     console.error("Error updating room:", error);

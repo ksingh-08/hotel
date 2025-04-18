@@ -41,9 +41,9 @@ interface BookingFormProps {
 export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [date, setDate] = useState<DateRange>({
-    from: new Date(),
-    to: new Date(new Date().setDate(new Date().getDate() + 3)),
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
   });
   const [formData, setFormData] = useState({
     guestHouseId: "",
@@ -51,7 +51,7 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
     guestName: "",
     guestEmail: "",
     guestPhone: "",
-    guests: 1,
+    guests: "1",
     specialRequests: "",
   });
 
@@ -61,7 +61,8 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date.from || !date.to) {
+
+    if (!date?.from || !date?.to) {
       toast({
         title: "Error",
         description: "Please select check-in and check-out dates",
@@ -80,7 +81,7 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
         body: JSON.stringify({
           ...formData,
           checkIn: date.from.toISOString(),
-          checkOut: date.toISOString(),
+          checkOut: date.to.toISOString(),
         }),
       });
 
@@ -107,8 +108,8 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -172,22 +173,25 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
               className="w-full justify-start text-left font-normal"
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {date.from ? (
+              {date?.from ? (
                 date.to ? (
-                  `${format(date.from, "PPP")} - ${format(date.to, "PPP")}`
+                  <>
+                    {format(date.from, "LLL dd, y")} -{" "}
+                    {format(date.to, "LLL dd, y")}
+                  </>
                 ) : (
-                  format(date.from, "PPP")
+                  format(date.from, "LLL dd, y")
                 )
               ) : (
                 <span>Pick a date</span>
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent className="w-auto p-0" align="start">
             <Calendar
               initialFocus
               mode="range"
-              defaultMonth={date.from}
+              defaultMonth={date?.from}
               selected={date}
               onSelect={setDate}
               numberOfMonths={2}
@@ -204,7 +208,7 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
             id="guestName"
             name="guestName"
             value={formData.guestName}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             minLength={2}
             placeholder="Your full name"
@@ -218,7 +222,7 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
             name="guestEmail"
             type="email"
             value={formData.guestEmail}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             placeholder="your.email@example.com"
           />
@@ -231,7 +235,7 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
             name="guestPhone"
             type="tel"
             value={formData.guestPhone}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             minLength={10}
             placeholder="Your phone number"
@@ -240,16 +244,24 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
 
         <div className="space-y-2">
           <Label htmlFor="guests">Number of Guests</Label>
-          <Input
-            id="guests"
+          <Select
             name="guests"
-            type="number"
-            min={1}
-            max={10}
             value={formData.guests}
-            onChange={handleChange}
-            required
-          />
+            onValueChange={(value) =>
+              setFormData((prev) => ({ ...prev, guests: value }))
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select number of guests" />
+            </SelectTrigger>
+            <SelectContent>
+              {["1", "2", "3", "4", "5"].map((num) => (
+                <SelectItem key={num} value={num}>
+                  {num} {num === "1" ? "Guest" : "Guests"}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
@@ -258,7 +270,7 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
             id="specialRequests"
             name="specialRequests"
             value={formData.specialRequests}
-            onChange={handleChange}
+            onChange={handleInputChange}
             placeholder="Any special requests or requirements?"
             className="min-h-[100px]"
           />
