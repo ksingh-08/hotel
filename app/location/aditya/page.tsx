@@ -217,7 +217,7 @@ const AdityaLocationPage = () => {
                       icon: <MapPinIcon className="w-5 h-5" />,
                     },
                     {
-                      place: "Dilwara Temples",
+                      place: "Delwara Temple",
                       distance: "2 km",
                       time: "10 min drive",
                       color: "bg-purple-100",

@@ -26,6 +26,8 @@ import bathroom2 from "./assets/bathroom2.jpg";
 import TrueFocus from "./../components/ui/TrueFocus";
 import { CalendarIcon } from "lucide-react";
 import Link from "next/link";
+import TypingEffect from "@/components/ui/TypingLoop";
+import TypingLoop from "@/components/ui/TypingLoop";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("all");
@@ -98,11 +100,11 @@ export default function Home() {
       answer:
         "Check-in time is 2:00 PM and check-out time is 11:00 AM. Early check-in or late check-out may be arranged based on availability, possibly with additional charges.",
     },
-    {
-      question: "Do you offer airport transfers?",
-      answer:
-        "Yes, we offer airport pickup and drop-off services at an additional cost. Please contact us at least 24 hours in advance to arrange this service.",
-    },
+    // {
+    //   question: "Do you offer airport transfers?",
+    //   answer:
+    //     "Yes, we offer airport pickup and drop-off services at an additional cost. Please contact us at least 24 hours in advance to arrange this service.",
+    // },
     {
       question: "Is breakfast included in the room rate?",
       answer:
@@ -176,7 +178,7 @@ export default function Home() {
         </div>
 
         {/* Centered Content */}
-        <div className="absolute inset-0 z-10 flex items-center justify-center px-4 text-center">
+        <div className="absolute mt-12 inset-0 z-10 flex items-center justify-center px-4 text-center">
           <div className="max-w-4xl">
             {/* Location Badge */}
             <div className="inline-flex items-center bg-white/10 backdrop-blur-sm px-4 py-1 rounded-full text-blue-100 mb-6 mx-auto">
@@ -191,14 +193,7 @@ export default function Home() {
             >
               Experience Tranquility at{" "}
               <span className="text-blue-400">
-                <TrueFocus
-                  sentence="Asha Aditya"
-                  manualMode={false}
-                  blurAmount={10}
-                  borderColor="light-blue"
-                  animationDuration={2}
-                  pauseBetweenAnimations={2}
-                />
+              <TypingLoop/>
               </span>
               <span className="">Guest House</span>
             </h1>
@@ -225,7 +220,7 @@ export default function Home() {
                 <div className="bg-blue-500/20 p-2 rounded-lg mr-3">
                   <Compass size={20} />
                 </div>
-                <span>Near Delwara Temple</span>
+                <span>Located in Main Market</span>
               </div>
               <div className="flex items-center">
                 <div className="bg-blue-500/20 p-2 rounded-lg mr-3">
@@ -237,15 +232,16 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              
-                <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all flex items-center justify-center">
-                  Book Your Stay Now
-                  <ChevronRight size={16} className="ml-2" />
+            <a href="#about">
+                <button className="px-8 py-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all  items-center justify-center">
+                  About Us
                 </button>
-             
-              <button className="px-8 py-4 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-medium rounded-lg border border-white/30 transition-all">
+                </a>
+                <a href="#rooms">
+              <button className="px-8 py-4 w-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-medium rounded-lg border border-white/30 transition-all">
                 View Our Rooms
               </button>
+              </a>
             </div>
           </div>
         </div>
@@ -271,17 +267,13 @@ export default function Home() {
       {/* About Section */}
       <section id="about" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center mb-16">
+          <div className="max-w-5xl mx-auto text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">About Us</h2>
-            <div className="h-1 w-20 bg-blue-600 mx-auto mb-8"></div>
+            <div className="h-1 w-24 bg-blue-600 mx-auto mb-8"></div>
             <p className="text-lg text-gray-700 leading-relaxed">
-              Established in 2020, Aditya Guest House has been providing
-              exceptional hospitality services for over many years. Nestled in a
-              prime location, we offer the perfect blend of comfort,
-              convenience, and affordability to both business and leisure
-              travelers. Our dedicated staff ensures that each guest experiences
-              a memorable stay with personalized service and attention to
-              detail.
+            
+  Welcome to <strong>Aditya & Asha Guest Houses</strong>, your perfect retreat in the heart of <strong>Mount Abu</strong>. Located right in the <strong>main market</strong>, our guest houses offer easy access to all major attractions, with famous spots like <strong>Nakki Lake</strong>, <strong>Achalgarh</strong>, <strong>Guru Shikhar</strong>, <strong>Delwara Temples</strong>, <strong>Gomukh</strong>, and many more just a short walk or ride away. We pride ourselves on providing <strong>comfortable and affordable rooms</strong> equipped with all essential amenities including <strong>TV, AC, Fridge, 24/7 Room service</strong>, and more. We also offer <strong>scooty rentals</strong> and <strong>ample parking space</strong> for a hassle-free stay. Whether you're traveling solo, as a couple, or with family, <strong>Aditya & Asha Guest Houses</strong> promise a relaxing and budget-friendly experience right in the lap of nature.
+
             </p>
           </div>
 
@@ -332,8 +324,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-2">Prime Location</h3>
               <p className="text-gray-600">
-                Centrally located with easy access to business districts,
-                shopping centers, and tourist attractions.
+                Centrally located with easy access to all major attractions.
               </p>
             </div>
 
@@ -380,7 +371,7 @@ export default function Home() {
 
           <div className="flex justify-center mb-8">
             <div className="inline-flex p-1 bg-gray-100 rounded-lg">
-              {["all", "standard", "deluxe", "premium"].map((type) => (
+              {["all", "STANDARD", "DELUXE", "PREMIUM"].map((type) => (
                 <button
                   key={type}
                   onClick={() => setActiveTab(type)}

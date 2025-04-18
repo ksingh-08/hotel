@@ -39,17 +39,17 @@ const Header = () => {
 
   return (
     <header className="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-10">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="relative z-20 flex items-center space-x-1 text-xl font-bold">
             <span className="text-blue-600">Himmat</span>
             <span className="text-gray-800">Singh</span>
-            <span className="text-sm text-gray-500 ml-2">Guest Houses</span>
+            {/* <span className="text-sm text-gray-500 ml-2">Guest Houses</span> */}
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-2 lg:space-x-4 items-center">
+          <nav className="hidden md:flex space-x-2 lg:space-x-9 items-center">
             {navigation.map((item) => (
               <Link
                 key={item.name}

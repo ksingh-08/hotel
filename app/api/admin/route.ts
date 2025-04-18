@@ -30,10 +30,10 @@ export async function GET(request: Request) {
       // Get total revenue
       const bookings = await prisma.booking.findMany({
         select: {
-          totalPrice: true,
+          totalAmount: true,
         },
       });
-      const totalRevenue = bookings.reduce((sum, booking) => sum + (booking.totalPrice || 0), 0);
+      const totalRevenue = bookings.reduce((sum, booking) => sum + (booking.totalAmount || 0), 0);
       
       // Get active guests (bookings with status 'confirmed' and current date within check-in and check-out)
       const today = new Date();
@@ -104,22 +104,8 @@ export async function POST(request: Request) {
     switch (action) {
       case 'updatePrice':
         const priceData = priceUpdateSchema.parse(body);
-        
-        // First, find the room by type
-        const room = await prisma.room.findFirst({
-          where: { type: priceData.roomType }
-        });
-
-        if (!room) {
-          return NextResponse.json(
-            { error: 'Room type not found' },
-            { status: 404 }
-          );
-        }
-
-        // Then update it using its ID
         const updatedRoom = await prisma.room.update({
-          where: { id: room.id },
+          where: { type: priceData.roomType },
           data: { price: priceData.price },
         });
         return NextResponse.json(updatedRoom);

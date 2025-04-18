@@ -22,9 +22,9 @@ const LocationPage = () => {
     {
       name: "Asha Guest House",
       description: "Peaceful retreat in a serene neighborhood",
-      address: "Near Nakki Lake, Mount Abu, Rajasthan(307501)",
-      mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3627.9093269731675!2d72.70676887520307!3d24.592325278105264!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395cd5adbd753feb%3A0x5fbf97b5bfe0ae19!2sAsha%20Guest%20House!5e0!3m2!1sen!2sin!4v1744815594641!5m2!1sen!2sin",
-      directionsUrl: "https://maps.app.goo.gl/yXTzKKLoitHwQCmX9",
+      address: "Near Chacha Museum, Vikas Nagar, Mount Abu, Rajasthan(307501)",
+      mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3627.9015743027244!2d72.71084689999999!3d24.5925928!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395d2bb4812fd6f1%3A0xa9feb28d260a4c0f!2sAsha%20Guest%20House!5e0!3m2!1sen!2sin!4v1744985326528!5m2!1sen!2sin",
+      directionsUrl: "https://maps.app.goo.gl/dB41FXmDhr1DyQZB8",
       href: "/location/asha",
     },
   ];
@@ -107,7 +107,7 @@ const LocationPage = () => {
                 </div>
 
                 <Link href={property.href}>
-                  <Button className="w-full flex items-center justify-center gap-2 py-6 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-blue-200 rounded-xl group">
+                  <Button className="text-white w-full flex items-center justify-center gap-2 py-6 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-blue-200 rounded-xl group">
                     View Details
                     <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>

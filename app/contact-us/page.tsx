@@ -281,23 +281,23 @@ const ContactSection = () => {
                   {[
                     { 
                       title: "Address", 
-                      details: "42 Main Street, City Center, 400001", 
+                      details: "Near Nakki Lake, Mount Abu, Rajasthan(307501)", 
                       icon: <MapPinIcon className="w-5 h-5" />,
                       color: "bg-blue-100",
                       textColor: "text-blue-700"
                     },
                     { 
                       title: "Phone", 
-                      details: "+91 12345 67890", 
-                      link: "tel:+911234567890",
+                      details: "+91 9414244541", 
+                      link: "tel:+919414244541",
                       icon: <PhoneIcon className="w-5 h-5" />,
                       color: "bg-green-100",
                       textColor: "text-green-700"
                     },
                     { 
                       title: "Email", 
-                      details: "info@adityaguesthouse.com", 
-                      link: "mailto:info@adityaguesthouse.com",
+                      details: "mailtohimmat@gmail.com", 
+                      link: "mailto:mailtohimmat@gmail.com",
                       icon: <MailIcon className="w-5 h-5" />,
                       color: "bg-purple-100",
                       textColor: "text-purple-700"

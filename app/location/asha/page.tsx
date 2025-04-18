@@ -81,7 +81,7 @@ const AshaLocationPage = () => {
             <div className="relative">
               <div className="w-full h-80 relative">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3627.9093269731675!2d72.70676887520307!3d24.592325278105264!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395cd5adbd753feb%3A0x5fbf97b5bfe0ae19!2sAsha%20Guest%20House!5e0!3m2!1sen!2sin!4v1744815594641!5m2!1sen!2sin"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3627.9015743027244!2d72.71084689999999!3d24.5925928!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395d2bb4812fd6f1%3A0xa9feb28d260a4c0f!2sAsha%20Guest%20House!5e0!3m2!1sen!2sin!4v1744985456775!5m2!1sen!2sin"
                   width="100%"
                   height="100%"
                   className="absolute top-0 left-0 border-0 w-full h-full"
@@ -93,7 +93,7 @@ const AshaLocationPage = () => {
 
               <div className="absolute top-4 right-4 bg-white rounded-full p-3 shadow-lg">
                 <a
-                  href="https://maps.app.goo.gl/yXTzKKLoitHwQCmX9"
+                  href="https://maps.app.goo.gl/dB41FXmDhr1DyQZB8"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -147,11 +147,16 @@ const AshaLocationPage = () => {
                   </a>
                 </div>
               </div>
-
-              <Button className="w-full flex items-center justify-center gap-2 py-6 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-blue-200 rounded-xl group">
+              <a
+                  href="https://maps.app.goo.gl/dB41FXmDhr1DyQZB8"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+              <Button className="text-white w-full flex items-center justify-center gap-2 py-6 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-blue-200 rounded-xl group">
                 Get Directions
                 <ExternalLinkIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
+              </a>
             </div>
           </motion.div>
 
@@ -225,7 +230,7 @@ const AshaLocationPage = () => {
                       icon: <MapPinIcon className="w-5 h-5" />,
                     },
                     {
-                      place: "Dilwara Temples",
+                      place: "Delwara Temple",
                       distance: "3 km",
                       time: "15 min drive",
                       color: "bg-amber-100",

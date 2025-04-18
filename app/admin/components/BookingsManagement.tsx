@@ -22,7 +22,7 @@ interface Booking {
   checkOut: string;
   roomType: string;
   status: string;
-  totalPrice: number;
+  totalAmount: number;
   createdAt: string;
 }
 
@@ -176,7 +176,7 @@ const BookingsManagement = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
-                    ₹{booking.totalPrice.toLocaleString()}
+                    ₹{booking.totalAmount.toLocaleString()}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
