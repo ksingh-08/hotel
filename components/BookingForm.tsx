@@ -16,33 +16,152 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { Textarea } from "@/components/ui/textarea";
 
-interface BookingFormProps {
-  onSubmit?: (data: {
-    date: DateRange;
-    guests: number;
-    roomType: string;
-  }) => void;
+interface Room {
+  id: string;
+  name: string;
+  type: string;
+  price: number;
+  capacity: number;
 }
 
-export function BookingForm({ onSubmit }: BookingFormProps) {
+interface GuestHouse {
+  id: string;
+  name: string;
+  rooms: Room[];
+}
+
+interface BookingFormProps {
+  guestHouses: GuestHouse[];
+  onSubmit?: (data: any) => void;
+}
+
+export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [date, setDate] = useState<DateRange>({
     from: new Date(),
     to: new Date(new Date().setDate(new Date().getDate() + 3)),
   });
-  const [guests, setGuests] = useState<number>(1);
-  const [roomType, setRoomType] = useState<string>("deluxe");
+  const [formData, setFormData] = useState({
+    guestHouseId: "",
+    roomId: "",
+    guestName: "",
+    guestEmail: "",
+    guestPhone: "",
+    guests: 1,
+    specialRequests: "",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const selectedGuestHouse = guestHouses.find(
+    (gh) => gh.id === formData.guestHouseId
+  );
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit?.({ date, guests, roomType });
+    if (!date.from || !date.to) {
+      toast({
+        title: "Error",
+        description: "Please select check-in and check-out dates",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          checkIn: date.from.toISOString(),
+          checkOut: date.toISOString(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create booking");
+      }
+
+      toast({
+        title: "Success!",
+        description: "Your booking has been submitted. We'll confirm it shortly.",
+      });
+
+      onSubmit?.(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-6 p-6 border rounded-xl shadow-md max-w-md bg-white"
-    >
+    <form onSubmit={handleSubmit} className="space-y-6 p-6 border rounded-xl shadow-md max-w-md bg-white">
+      {/* Guest House Selection */}
+      <div className="space-y-2">
+        <Label htmlFor="guestHouseId">Guest House</Label>
+        <Select
+          value={formData.guestHouseId}
+          onValueChange={(value) => handleSelectChange("guestHouseId", value)}
+        >
+          <SelectTrigger id="guestHouseId">
+            <SelectValue placeholder="Select a guest house" />
+          </SelectTrigger>
+          <SelectContent>
+            {guestHouses.map((gh) => (
+              <SelectItem key={gh.id} value={gh.id}>
+                {gh.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Room Selection */}
+      {selectedGuestHouse && (
+        <div className="space-y-2">
+          <Label htmlFor="roomId">Room Type</Label>
+          <Select
+            value={formData.roomId}
+            onValueChange={(value) => handleSelectChange("roomId", value)}
+          >
+            <SelectTrigger id="roomId">
+              <SelectValue placeholder="Select a room type" />
+            </SelectTrigger>
+            <SelectContent>
+              {selectedGuestHouse.rooms.map((room) => (
+                <SelectItem key={room.id} value={room.id}>
+                  {room.name} - ₹{room.price}/night
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       {/* Date Range Picker */}
       <div className="space-y-2">
         <Label>Date Range</Label>
@@ -70,52 +189,89 @@ export function BookingForm({ onSubmit }: BookingFormProps) {
               mode="range"
               defaultMonth={date.from}
               selected={date}
-              onSelect={(newDate) => {
-                // Ensure newDate is a valid DateRange
-                if (newDate?.from && newDate?.to) {
-                  setDate(newDate);
-                }
-              }}
+              onSelect={setDate}
               numberOfMonths={2}
             />
           </PopoverContent>
         </Popover>
       </div>
 
-      {/* Guests Input */}
-      <div className="space-y-2">
-        <Label htmlFor="guests">Guests</Label>
-        <Input
-          id="guests"
-          type="number"
-          min={1}
-          max={10}
-          value={guests}
-          onChange={(e) => setGuests(Number(e.target.value))}
-        />
-      </div>
+      {/* Guest Information */}
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="guestName">Full Name</Label>
+          <Input
+            id="guestName"
+            name="guestName"
+            value={formData.guestName}
+            onChange={handleChange}
+            required
+            minLength={2}
+            placeholder="Your full name"
+          />
+        </div>
 
-      {/* Room Type Selection */}
-      <div className="space-y-2">
-        <Label htmlFor="roomType">Room Type</Label>
-        <Select
-          defaultValue={roomType}
-          onValueChange={(value) => setRoomType(value)}
-        >
-          <SelectTrigger id="roomType">
-            <SelectValue placeholder="Select a room type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="standard">Standard</SelectItem>
-            <SelectItem value="deluxe">Deluxe</SelectItem>
-            <SelectItem value="suite">Suite</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="space-y-2">
+          <Label htmlFor="guestEmail">Email</Label>
+          <Input
+            id="guestEmail"
+            name="guestEmail"
+            type="email"
+            value={formData.guestEmail}
+            onChange={handleChange}
+            required
+            placeholder="your.email@example.com"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="guestPhone">Phone</Label>
+          <Input
+            id="guestPhone"
+            name="guestPhone"
+            type="tel"
+            value={formData.guestPhone}
+            onChange={handleChange}
+            required
+            minLength={10}
+            placeholder="Your phone number"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="guests">Number of Guests</Label>
+          <Input
+            id="guests"
+            name="guests"
+            type="number"
+            min={1}
+            max={10}
+            value={formData.guests}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="specialRequests">Special Requests</Label>
+          <Textarea
+            id="specialRequests"
+            name="specialRequests"
+            value={formData.specialRequests}
+            onChange={handleChange}
+            placeholder="Any special requests or requirements?"
+            className="min-h-[100px]"
+          />
+        </div>
       </div>
 
       {/* Submit Button */}
-      <Button type="submit" className="w-full">
-        Book Now
+      <Button
+        type="submit"
+        className="w-full"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? "Submitting..." : "Book Now"}
       </Button>
     </form>
   );

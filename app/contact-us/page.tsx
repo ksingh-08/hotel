@@ -19,10 +19,62 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}
+
 const ContactSection = () => {
   const [activeTab, setActiveTab] = useState("message");
   const [hoverItem, setHoverItem] = useState<string | null>(null);
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+  });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+
+      setStatus('success');
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        message: '',
+      });
+    } catch (error) {
+      setStatus('error');
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to send message');
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   // Animation variants
   const containerVariants = {
@@ -96,7 +148,7 @@ const ContactSection = () => {
             </div>
 
             <div className="p-8">
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -106,6 +158,9 @@ const ContactSection = () => {
                     <input
                       type="text"
                       id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
                       placeholder="Your name"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                     />
@@ -118,6 +173,9 @@ const ContactSection = () => {
                     <input
                       type="email"
                       id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
                       placeholder="your.email@example.com"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                     />
@@ -125,14 +183,17 @@ const ContactSection = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="subject" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <CalendarIcon className="w-4 h-4 text-blue-600" />
-                    Subject
+                  <label htmlFor="phone" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <PhoneIcon className="w-4 h-4 text-blue-600" />
+                    Phone
                   </label>
                   <input
-                    type="text"
-                    id="subject"
-                    placeholder="How can we help you?"
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Your phone number"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   />
                 </div>
@@ -144,6 +205,9 @@ const ContactSection = () => {
                   </label>
                   <textarea
                     id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
                     rows={4}
                     placeholder="Your message"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
@@ -151,9 +215,21 @@ const ContactSection = () => {
                 </div>
                 
                 <Button className="w-full flex items-center justify-center gap-2 py-6 text-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-blue-200 rounded-xl group">
-                  Send Message
+                  {status === 'loading' ? 'Sending...' : 'Send Message'}
                   <SendIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
+
+                {status === 'success' && (
+                  <div className="text-green-600 text-sm text-center">
+                    Message sent successfully!
+                  </div>
+                )}
+
+                {status === 'error' && (
+                  <div className="text-red-600 text-sm text-center">
+                    {errorMessage}
+                  </div>
+                )}
               </form>
             </div>
           </motion.div>

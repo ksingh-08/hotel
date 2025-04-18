@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model GuestHouse {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  address     String
+  city        String
+  state       String
+  zipCode     String
+  phone       String
+  email       String
+  website     String?
+  images      String[]
+  amenities   String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  rooms       Room[]
+  bookings    Booking[]
+}
+
+model Room {
+  id           String   @id @default(cuid())
+  name         String
+  description  String
+  type         String   // standard, deluxe, suite
+  price        Float
+  capacity     Int
+  amenities    String[]
+  images       String[]
+  guestHouseId String
+  guestHouse   GuestHouse @relation(fields: [guestHouseId], references: [id])
+  bookings     Booking[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Booking {
+  id             String   @id @default(cuid())
+  guestName      String
+  guestEmail     String
+  guestPhone     String
+  checkIn        DateTime
+  checkOut       DateTime
+  guests         Int
+  roomId         String
+  room           Room     @relation(fields: [roomId], references: [id])
+  guestHouseId   String
+  guestHouse     GuestHouse @relation(fields: [guestHouseId], references: [id])
+  status         String   // PENDING, CONFIRMED, CANCELLED
+  totalPrice     Float
+  specialRequests String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HotelSettings {
+  id          Int      @id @default(1)
+  name        String
+  email       String
+  phone       String
+  address     String
+  website     String
+  checkInTime String
+  checkOutTime String
+  basePrice   Float
+  taxRate     Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+} 
