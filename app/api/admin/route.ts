@@ -104,8 +104,22 @@ export async function POST(request: Request) {
     switch (action) {
       case 'updatePrice':
         const priceData = priceUpdateSchema.parse(body);
+        
+        // First, find the room by type
+        const room = await prisma.room.findFirst({
+          where: { type: priceData.roomType }
+        });
+
+        if (!room) {
+          return NextResponse.json(
+            { error: 'Room type not found' },
+            { status: 404 }
+          );
+        }
+
+        // Then update it using its ID
         const updatedRoom = await prisma.room.update({
-          where: { type: priceData.roomType },
+          where: { id: room.id },
           data: { price: priceData.price },
         });
         return NextResponse.json(updatedRoom);

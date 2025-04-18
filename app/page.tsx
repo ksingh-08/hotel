@@ -11,7 +11,7 @@ import { TestimonialCard } from "@/components/Testimonial";
 import { FAQAccordion } from "@/components/FAQAccordian";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import { SparklesCore } from "@/components/ui/sparkles";
-import { ChevronRight, MapPin, Compass, Clock, Link } from "lucide-react";
+import { ChevronRight, MapPin, Compass, Clock } from "lucide-react";
 import mount from "../app/assets/mount.webp";
 import mount1 from "../app/assets/mount1.jpg";
 import mount2 from "../app/assets/mount2.jpg";
@@ -24,6 +24,9 @@ import room from "./assets/room.jpg";
 import hallway from "./assets/hallway.jpg";
 import bathroom2 from "./assets/bathroom2.jpg";
 import TrueFocus from "./../components/ui/TrueFocus";
+import { CalendarIcon } from "lucide-react";
+import Link from "next/link";
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState("all");
 

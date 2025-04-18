@@ -8,11 +8,11 @@ export async function DELETE(
   try {
     const { id } = params;
 
-    await prisma.contact.delete({
+    const deletedMessage = await prisma.contact.delete({
       where: { id },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json(deletedMessage);
   } catch (error) {
     console.error("Error deleting message:", error);
     return NextResponse.json(
@@ -28,22 +28,8 @@ export async function PATCH(
 ) {
   try {
     const { id } = params;
-    const body = await request.json();
-    const { read } = body;
+    const { read } = await request.json();
 
-    // First check if the message exists
-    const existingMessage = await prisma.contact.findUnique({
-      where: { id },
-    });
-
-    if (!existingMessage) {
-      return NextResponse.json(
-        { error: "Message not found" },
-        { status: 404 }
-      );
-    }
-
-    // Update the message with the read status
     const updatedMessage = await prisma.contact.update({
       where: { id },
       data: { read },
