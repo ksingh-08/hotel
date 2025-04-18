@@ -30,10 +30,10 @@ export async function GET(request: Request) {
       // Get total revenue
       const bookings = await prisma.booking.findMany({
         select: {
-          totalAmount: true,
+          totalPrice: true,
         },
       });
-      const totalRevenue = bookings.reduce((sum, booking) => sum + (booking.totalAmount || 0), 0);
+      const totalRevenue = bookings.reduce((sum, booking) => sum + (booking.totalPrice || 0), 0);
       
       // Get active guests (bookings with status 'confirmed' and current date within check-in and check-out)
       const today = new Date();
