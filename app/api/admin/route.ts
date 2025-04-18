@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 // Validation schemas
 const priceUpdateSchema = z.object({
-  roomType: z.string(),
+  roomId: z.string(),
   price: z.number().positive(),
 });
 
@@ -30,10 +30,10 @@ export async function GET(request: Request) {
       // Get total revenue
       const bookings = await prisma.booking.findMany({
         select: {
-          totalAmount: true,
+          totalPrice: true,
         },
       });
-      const totalRevenue = bookings.reduce((sum, booking) => sum + (booking.totalAmount || 0), 0);
+      const totalRevenue = bookings.reduce((sum, booking) => sum + (booking.totalPrice || 0), 0);
       
       // Get active guests (bookings with status 'confirmed' and current date within check-in and check-out)
       const today = new Date();
@@ -98,19 +98,28 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { action } = body;
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type');
 
-    switch (action) {
-      case 'updatePrice':
+    if (!type) {
+      return NextResponse.json(
+        { error: 'Request type is required' },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+
+    switch (type) {
+      case 'update-price':
         const priceData = priceUpdateSchema.parse(body);
         const updatedRoom = await prisma.room.update({
-          where: { type: priceData.roomType },
+          where: { id: priceData.roomId },
           data: { price: priceData.price },
         });
         return NextResponse.json(updatedRoom);
 
-      case 'updateBookingStatus':
+      case 'update-booking-status':
         const bookingData = bookingStatusSchema.parse(body);
         const updatedBooking = await prisma.booking.update({
           where: { id: bookingData.bookingId },
@@ -118,7 +127,7 @@ export async function POST(request: Request) {
         });
         return NextResponse.json(updatedBooking);
 
-      case 'updateMessageStatus':
+      case 'update-message-status':
         const messageData = messageStatusSchema.parse(body);
         const updatedMessage = await prisma.contact.update({
           where: { id: messageData.messageId },
@@ -128,18 +137,11 @@ export async function POST(request: Request) {
 
       default:
         return NextResponse.json(
-          { error: 'Invalid action' },
+          { error: 'Invalid request type' },
           { status: 400 }
         );
     }
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
-      );
-    }
-
     console.error('Admin API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },

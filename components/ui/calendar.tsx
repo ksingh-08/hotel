@@ -6,17 +6,15 @@ import { DayPicker, DayPickerProps } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
-interface CalendarProps extends Omit<DayPickerProps, "components"> {
-  showOutsideDays?: boolean;
-  classNames?: Record<string, string>;
-}
+
+export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
   ...props
-}: React.ComponentProps<typeof DayPicker>) {
+}: CalendarProps) {
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -63,35 +61,7 @@ function Calendar({
         day_hidden: "invisible",
         ...classNames,
       }}
-      components={{
-        Nav: ({ nextMonth, previousMonth, onNextClick, onPreviousClick }) => (
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={(e) => onPreviousClick?.(e)}
-              disabled={!previousMonth}
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                "size-7 bg-transparent p-0 opacity-50 hover:opacity-100"
-              )}
-            >
-              <ChevronLeft className="size-4" />
-            </button>
-            <button
-              type="button"
-              onClick={(e) => onNextClick?.(e)}
-              disabled={!nextMonth}
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                "size-7 bg-transparent p-0 opacity-50 hover:opacity-100"
-              )}
-            >
-              <ChevronRight className="size-4" />
-            </button>
-          </div>
-        ),
-      }}
-      
+      {...props}
     />
   )
 }

@@ -3,20 +3,19 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const rooms = await prisma.room.findMany({
-      include: {
-        amenities: true,
-      },
-    });
+    const rooms = await prisma.room.findMany();
 
     // Transform the data to match the frontend interface
     const formattedRooms = rooms.map((room) => ({
       id: room.id,
+      name: room.name,
       type: room.type,
       price: room.price,
       description: room.description,
-      amenities: room.amenities.map((a) => a.name),
-      maxOccupancy: room.maxOccupancy,
+      amenities: room.amenities,
+      capacity: room.capacity,
+      images: room.images,
+      guestHouseId: room.guestHouseId,
     }));
 
     return NextResponse.json(formattedRooms);
@@ -32,20 +31,22 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { type, price, description, amenities, maxOccupancy } = body;
+    const { name, type, price, description, amenities, capacity, images, guestHouseId } = body;
 
     const room = await prisma.room.create({
       data: {
+        name,
         type,
         price,
         description,
-        maxOccupancy,
-        amenities: {
-          create: amenities.map((name: string) => ({ name })),
+        capacity,
+        amenities,
+        images,
+        guestHouse: {
+          connect: {
+            id: guestHouseId,
+          },
         },
-      },
-      include: {
-        amenities: true,
       },
     });
 
@@ -67,9 +68,6 @@ export async function PUT(request: Request) {
     const room = await prisma.room.update({
       where: { id },
       data: { price },
-      include: {
-        amenities: true,
-      },
     });
 
     return NextResponse.json(room);

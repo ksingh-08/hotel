@@ -41,7 +41,7 @@ interface BookingFormProps {
 export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [date, setDate] = useState<DateRange>({
+  const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(new Date().setDate(new Date().getDate() + 3)),
   });
@@ -61,7 +61,7 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date.from || !date.to) {
+    if (!date?.from || !date?.to) {
       toast({
         title: "Error",
         description: "Please select check-in and check-out dates",
@@ -80,7 +80,7 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
         body: JSON.stringify({
           ...formData,
           checkIn: date.from.toISOString(),
-          checkOut: date.toISOString(),
+          checkOut: date.to.toISOString(),
         }),
       });
 
@@ -172,7 +172,7 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
               className="w-full justify-start text-left font-normal"
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {date.from ? (
+              {date?.from ? (
                 date.to ? (
                   `${format(date.from, "PPP")} - ${format(date.to, "PPP")}`
                 ) : (
@@ -185,11 +185,10 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
             <Calendar
-              initialFocus
               mode="range"
-              defaultMonth={date.from}
+              month={date?.from}
               selected={date}
-              onSelect={setDate}
+              onSelect={(range: DateRange | undefined) => setDate(range)}
               numberOfMonths={2}
             />
           </PopoverContent>
@@ -198,20 +197,19 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
 
       {/* Guest Information */}
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="guestName">Full Name</Label>
+        <div>
+          <Label htmlFor="guestName">Name</Label>
           <Input
             id="guestName"
             name="guestName"
             value={formData.guestName}
             onChange={handleChange}
+            placeholder="Enter your name"
             required
-            minLength={2}
-            placeholder="Your full name"
           />
         </div>
 
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="guestEmail">Email</Label>
           <Input
             id="guestEmail"
@@ -219,12 +217,12 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
             type="email"
             value={formData.guestEmail}
             onChange={handleChange}
+            placeholder="Enter your email"
             required
-            placeholder="your.email@example.com"
           />
         </div>
 
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="guestPhone">Phone</Label>
           <Input
             id="guestPhone"
@@ -232,27 +230,25 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
             type="tel"
             value={formData.guestPhone}
             onChange={handleChange}
+            placeholder="Enter your phone number"
             required
-            minLength={10}
-            placeholder="Your phone number"
           />
         </div>
 
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="guests">Number of Guests</Label>
           <Input
             id="guests"
             name="guests"
             type="number"
-            min={1}
-            max={10}
+            min="1"
             value={formData.guests}
             onChange={handleChange}
             required
           />
         </div>
 
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="specialRequests">Special Requests</Label>
           <Textarea
             id="specialRequests"
@@ -260,18 +256,13 @@ export function BookingForm({ guestHouses, onSubmit }: BookingFormProps) {
             value={formData.specialRequests}
             onChange={handleChange}
             placeholder="Any special requests or requirements?"
-            className="min-h-[100px]"
+            rows={3}
           />
         </div>
       </div>
 
-      {/* Submit Button */}
-      <Button
-        type="submit"
-        className="w-full"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? "Submitting..." : "Book Now"}
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Booking..." : "Book Now"}
       </Button>
     </form>
   );
